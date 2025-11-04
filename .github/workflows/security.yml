@@ -1,0 +1,29 @@
+name: Security Compliance
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:  # Allow manual trigger for testing
+
+jobs:
+  # Call your security compliance hub
+  security-scan:
+    uses: acald-creator/security-compliance-hub/.github/workflows/security-scan.yml@main
+    with:
+      severity-threshold: MEDIUM
+      compliance-frameworks: openssf
+      enable-signing: false  # Start with false for testing
+    permissions:
+      contents: read
+      security-events: write
+      id-token: write
+      actions: read
+
+  # Call the DevSecOps workflow
+  devsecops-check:
+    uses: acald-creator/security-compliance-hub/.github/workflows/devsecops-infinity.yml@main
+    with:
+      phase: plan  # Just test one phase first
+    permissions:
+      contents: read
