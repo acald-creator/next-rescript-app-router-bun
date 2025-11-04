@@ -6,6 +6,7 @@ name: Security Compliance
 # these if you do not want to allow write operations from the workflow.
 permissions:
   id-token: write
+  security-events: write
   contents: write
   packages: write
 
