@@ -4,18 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Next.js 15 application using the App Router architecture with ReScript integration and Bun as the package manager. The project combines TypeScript (for Next.js components) with ReScript (for functional programming) and uses Biome for code formatting and linting.
+This is a Next.js 16 application using the App Router architecture with ReScript integration and Bun as the package manager. All pages and components are written in ReScript (no TypeScript components). Uses Biome for code formatting and linting, and Tailwind CSS v4 for styling.
 
 ## Development Commands
 
 ### Running the Application
-- `bun dev` - Start development server (preferred, uses Bun)
-- `npm run dev` - Alternative development server
-- `bun run dev:turbo` - Development with Turbopack (experimental)
-
-### Building
+- `bun dev` - Start development server (uses Turbopack by default in Next.js 16)
 - `bun run build` - Full production build (compiles ReScript then Next.js)
-- `bun run build:turbo` - Build with Turbopack (experimental)
 
 ### ReScript Development
 - `bun run res:build` - Compile ReScript files to JavaScript
@@ -32,10 +27,10 @@ This is a Next.js 15 application using the App Router architecture with ReScript
 
 ## Architecture
 
-### Hybrid Language Approach
-This project uses both TypeScript and ReScript:
-- **TypeScript**: Next.js App Router components (`src/app/`)
-- **ReScript**: Business logic and utilities (`src/bindings/`)
+### ReScript-First Approach
+All pages, layouts, and components are written in ReScript:
+- `src/app/` - Next.js App Router pages, layouts, and components (`.res` files)
+- `src/bindings/` - ReScript FFI bindings for Next.js APIs
 
 ### ReScript Integration
 - ReScript source files are in `src/` with `.res` extension
@@ -46,22 +41,34 @@ This project uses both TypeScript and ReScript:
 
 ### Next.js Configuration
 The `next.config.ts` includes:
-- Custom webpack rules for ReScript `.mjs` files
+- Turbopack configuration with `resolveExtensions` for `.mjs` files
+- Webpack fallback rules for non-Turbopack builds
 - Transpilation of ReScript packages
-- Client-side fallbacks for Node.js modules (fs, path)
+- `pageExtensions: ["tsx", "ts", "jsx", "js", "res.mjs"]`
 
 ### Directory Structure
-- `src/app/` - Next.js App Router pages and layouts (TypeScript)
+- `src/app/` - Next.js App Router pages, layouts, and components (ReScript)
+- `src/app/CodeBlock.res` - Client component for interactive code showcase
 - `src/bindings/` - ReScript bindings for Next.js APIs
-- `lib/bs/` - ReScript build artifacts (auto-generated)
 
 ### ReScript Bindings
-The project includes comprehensive Next.js App Router bindings in `src/bindings/NextAppRouter.res` covering:
-- Client-side navigation hooks (useRouter, usePathname, etc.)
-- Link component
-- Metadata types and helpers
-- Error handling
-- Loading states
+
+**`src/bindings/NextAppRouter.res`** — Client-side bindings:
+- Navigation hooks: `useRouter`, `usePathname`, `useSearchParams`, `useParams`
+- Router methods with options: `pushWithOptions`, `replaceWithOptions`, `prefetchWithOptions`
+- `Link` component with `transitionTypes` prop (Next.js 16)
+- `Image` component with `preload` prop (`priority` deprecated)
+- `Metadata` types (viewport/themeColor/colorScheme removed — use separate `viewport` export)
+- `generateMetadataParams` with async `promise<T>` for params/searchParams
+- Error handling with `Exn.t`
+
+**`src/bindings/NextAppServer.res`** — Server-side bindings:
+- `cookies()` and `headers()` return `promise<T>` (async in Next.js 16)
+- Page `params` and `searchParams` are `promise<T>` (async in Next.js 16)
+- Server Actions with FormData
+- Route Handlers (NextRequest, HTTP method types)
+- Stable `cacheTag` and `cacheLife` bindings (replace deprecated `unstable_cache`/`unstable_noStore`)
+- Revalidation: `revalidatePath`, `revalidateTag`
 
 ## Tools and Configuration
 
@@ -80,9 +87,8 @@ The project includes comprehensive Next.js App Router bindings in `src/bindings/
 
 1. Start ReScript compilation in watch mode: `bun run res:dev`
 2. Start Next.js dev server: `bun dev`
-3. Edit ReScript files in `src/` - they auto-compile to `.res.mjs`
-4. Edit TypeScript components in `src/app/`
-5. Run linting: `bun run lint`
+3. Edit ReScript files in `src/` — they auto-compile to `.res.mjs`
+4. Run linting: `bun run lint`
 
 ## Common ReScript Compilation Errors
 
@@ -92,7 +98,7 @@ The project includes comprehensive Next.js App Router bindings in `src/bindings/
 **Cause**: ReScript doesn't allow inline record types in regular type definitions like:
 ```rescript
 type example = {
-  field: array<{name: string, value: int}>  // ❌ This fails
+  field: array<{name: string, value: int}>  // This fails
 }
 ```
 
@@ -100,7 +106,7 @@ type example = {
 ```rescript
 type innerRecord = {name: string, value: int}
 type example = {
-  field: array<innerRecord>  // ✅ This works
+  field: array<innerRecord>  // This works
 }
 ```
 
@@ -111,10 +117,10 @@ type example = {
 
 **Fix**: Use explicit `option<'a>` types:
 ```rescript
-// ❌ Don't use this for JS bindings:
+// Don't use this for JS bindings:
 type metadata = { title?: string }
 
-// ✅ Use this instead:
+// Use this instead:
 type metadata = { title: option<string> }
 ```
 
@@ -155,14 +161,14 @@ let make = (~children) => {
 
 **Fix**: Wrap external bindings in a module:
 ```rescript
-// ❌ This fails:
+// This fails:
 @module("next/image") @react.component
 external image: (~src: string) => React.element = "default"
 
 @react.component
 let make = () => <div />
 
-// ✅ Use this instead:
+// Use this instead:
 module Image = {
   @module("next/image") @react.component
   external make: (~src: string) => React.element = "default"
@@ -182,12 +188,6 @@ let make = () => <Image src="/logo.png" />
 
 **Fix**: Use `%%raw` to generate the exact JavaScript that Next.js expects:
 ```rescript
-// ❌ This fails with namespace/const errors:
-@module("next/font/google")
-external geist: {...} => {...} = "Geist"
-let font = geist({...})
-
-// ✅ Use this pattern instead:
 // Font loaders - must be const declarations at module scope for Next.js
 %%raw(`
 import { Geist, Geist_Mono } from "next/font/google";
@@ -216,8 +216,8 @@ const geistMonoFont = Geist_Mono({
 %%raw(`import "./globals.css"`)
 ```
 
-### Metadata Export
-**Pattern**: Use the Metadata types from bindings:
+### Metadata Export (Next.js 16)
+**Pattern**: Use the Metadata types from bindings. Note: `viewport`, `themeColor`, and `colorScheme` are no longer part of `metadata` — use a separate `viewport` export.
 ```rescript
 open NextAppRouter.Metadata
 
@@ -225,8 +225,23 @@ let metadata: metadata = {
   title: Some("Page Title"),
   description: Some("Page description"),
   keywords: None,
-  // ... set other fields to None
+  authors: None,
+  creator: None,
+  publisher: None,
+  robots: None,
+  openGraph: None,
+  twitter: None,
+  manifest: None,
+  icons: None,
 }
+```
+
+### Async Server APIs (Next.js 16)
+**Important**: `cookies()`, `headers()`, page `params`, and `searchParams` are all async in Next.js 16. They return `promise<T>` and must be awaited.
+```rescript
+// Server component usage
+let cookieStore = await NextAppServer.Cookies.cookies()
+let headerStore = await NextAppServer.Headers.headers()
 ```
 
 ### Special HTML Attributes
@@ -241,22 +256,12 @@ let metadata: metadata = {
 // ~ariaHidden: bool=? @as("aria-hidden")
 ```
 
-### Next.js Configuration Updates
-**Required**: Add ReScript compiled extensions to Next.js config:
-```typescript
-// next.config.ts
-const nextConfig: NextConfig = {
-  pageExtensions: ["tsx", "ts", "jsx", "js", "res.mjs"],
-  // ... other config
-}
-```
-
 ### String Content
 **Pattern**: Always wrap text content in `React.string()`:
 ```rescript
-// ❌ This fails:
+// This fails:
 <div>"Hello World"</div>
 
-// ✅ Use this:
+// Use this:
 <div>{React.string("Hello World")}</div>
 ```
