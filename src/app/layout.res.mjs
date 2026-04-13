@@ -38,9 +38,6 @@ var metadata = {
   robots: undefined,
   openGraph: undefined,
   twitter: undefined,
-  viewport: undefined,
-  themeColor: undefined,
-  colorScheme: undefined,
   manifest: undefined,
   icons: undefined
 };

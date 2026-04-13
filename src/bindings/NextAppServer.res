@@ -1,4 +1,5 @@
 // Next.js App Router Server-side bindings
+// Updated for Next.js 16.x
 // Server Components, Server Actions, and Route Handlers
 
 // ============================================================================
@@ -43,14 +44,6 @@ module ServerComponent = {
 
   @module("next/navigation")
   external notFound: unit => unit = "notFound"
-
-  // Note: To mark server functions, use @@directive("'use server'") at the top of function files
-  // Example:
-  // @@directive("'use server'")
-  //
-  // let myServerAction = async (formData) => {
-  //   // server action logic
-  // }
 }
 
 // ============================================================================
@@ -114,16 +107,12 @@ module RouteHandler = {
     url: string,
     method: string,
     headers: headers,
-
     // Next.js specific extensions
     nextUrl: nextUrl,
-
     // Cookies
     cookies: cookieMethods,
-
     // Geolocation (Vercel)
     geo: option<geo>,
-
     // IP address
     ip: option<string>,
   }
@@ -154,7 +143,7 @@ module RouteHandler = {
 }
 
 // ============================================================================
-// COOKIES (Server-side)
+// COOKIES (Server-side) — async in Next.js 16
 // ============================================================================
 
 module Cookies = {
@@ -173,12 +162,13 @@ module Cookies = {
     delete: string => unit,
   }
 
+  // Returns a promise in Next.js 16
   @module("next/headers")
-  external cookies: unit => cookieStore = "cookies"
+  external cookies: unit => promise<cookieStore> = "cookies"
 }
 
 // ============================================================================
-// HEADERS (Server-side)
+// HEADERS (Server-side) — async in Next.js 16
 // ============================================================================
 
 module Headers = {
@@ -190,12 +180,13 @@ module Headers = {
     forEach: ((string, string) => unit) => unit,
   }
 
+  // Returns a promise in Next.js 16
   @module("next/headers")
-  external headers: unit => headerStore = "headers"
+  external headers: unit => promise<headerStore> = "headers"
 }
 
 // ============================================================================
-// DYNAMIC ROUTE SEGMENTS
+// DYNAMIC ROUTE SEGMENTS — params are async in Next.js 16
 // ============================================================================
 
 module Params = {
@@ -205,10 +196,10 @@ module Params = {
   // Type for search parameters
   type searchParams = Dict.t<string>
 
-  // Page props type for dynamic routes
+  // Page props type for dynamic routes (params/searchParams are promises in Next.js 16)
   type pageProps<'params> = {
-    params: 'params,
-    searchParams: searchParams,
+    params: promise<'params>,
+    searchParams: promise<searchParams>,
   }
 }
 
@@ -225,19 +216,24 @@ module Revalidation = {
 }
 
 // ============================================================================
-// CACHING
+// CACHING — stable APIs in Next.js 16
 // ============================================================================
 
 module Cache = {
-  // Cache options type
+  // Tag cached data for selective revalidation
+  @module("next/cache")
+  external cacheTag: string => unit = "cacheTag"
+
+  // Declare cache duration profile in "use cache" functions
+  @module("next/cache")
+  external cacheLife: string => unit = "cacheLife"
+
+  // Legacy APIs (deprecated in Next.js 16, prefer cacheTag/cacheLife)
   type cacheOptions
 
   @module("next/cache")
-  external unstable_cache: (
-    'fn,
-    ~keys: array<string>=?,
-    ~options: cacheOptions=?
-  ) => 'fn = "unstable_cache"
+  external unstable_cache: ('fn, ~keys: array<string>=?, ~options: cacheOptions=?) => 'fn =
+    "unstable_cache"
 
   @module("next/cache")
   external unstable_noStore: unit => unit = "unstable_noStore"

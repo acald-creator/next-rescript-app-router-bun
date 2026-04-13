@@ -9,9 +9,6 @@ const nextConfig: NextConfig = {
   // Support both JS/JSX (for pages), TS/TSX (for app router), and ReScript compiled files
   pageExtensions: ["tsx", "ts", "jsx", "js", "res.mjs"],
 
-  // Remove static export for App Router compatibility
-  // output: "export", // Remove this line for App Router
-
   env: {
     ENV: process.env.NODE_ENV,
   },
@@ -19,6 +16,12 @@ const nextConfig: NextConfig = {
   // Transpile ReScript dependencies
   transpilePackages: transpileModules,
 
+  // Turbopack configuration (default bundler in Next.js 16)
+  turbopack: {
+    resolveExtensions: [".mjs", ".js", ".jsx", ".ts", ".tsx", ".json"],
+  },
+
+  // Webpack fallback for `next build --webpack` or environments not using Turbopack
   webpack: (config, options) => {
     const { isServer } = options;
 

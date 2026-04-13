@@ -5,6 +5,8 @@ var $$Navigation = {};
 
 var Link = {};
 
+var $$Image = {};
+
 function make(title, description, keywords, openGraph, twitter, robots, param) {
   return {
           title: title,
@@ -16,9 +18,6 @@ function make(title, description, keywords, openGraph, twitter, robots, param) {
           robots: robots,
           openGraph: openGraph,
           twitter: twitter,
-          viewport: undefined,
-          themeColor: undefined,
-          colorScheme: undefined,
           manifest: undefined,
           icons: undefined
         };
@@ -35,6 +34,7 @@ var Loading = {};
 export {
   $$Navigation ,
   Link ,
+  $$Image ,
   Metadata ,
   ErrorHandling ,
   Loading ,

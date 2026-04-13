@@ -30,9 +30,6 @@ let metadata: metadata = {
   robots: None,
   openGraph: None,
   twitter: None,
-  viewport: None,
-  themeColor: None,
-  colorScheme: None,
   manifest: None,
   icons: None,
 }

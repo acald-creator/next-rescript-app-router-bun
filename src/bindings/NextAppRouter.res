@@ -1,4 +1,5 @@
 // Next.js App Router bindings for ReScript
+// Updated for Next.js 16.x
 // Comprehensive bindings for client-side navigation, server components, and more
 
 // ============================================================================
@@ -8,6 +9,17 @@
 module Navigation = {
   // URLSearchParams binding
   type urlSearchParams
+
+  // Navigation options for push/replace
+  type navigationOptions = {
+    scroll?: bool,
+    transitionTypes?: array<string>,
+  }
+
+  // Prefetch options
+  type prefetchOptions = {
+    onInvalidate?: unit => unit,
+  }
 
   // Router object returned by useRouter
   type router = {
@@ -32,6 +44,11 @@ module Navigation = {
   @module("next/navigation")
   external useParams: unit => Dict.t<string> = "useParams"
 
+  // Push/replace with options
+  @send external pushWithOptions: (router, string, navigationOptions) => unit = "push"
+  @send external replaceWithOptions: (router, string, navigationOptions) => unit = "replace"
+  @send external prefetchWithOptions: (router, string, prefetchOptions) => unit = "prefetch"
+
   // Navigation functions (client-side)
   @module("next/navigation")
   external redirect: string => unit = "redirect"
@@ -44,7 +61,7 @@ module Navigation = {
 }
 
 // ============================================================================
-// LINK COMPONENT (Updated for App Router)
+// LINK COMPONENT (Updated for Next.js 16)
 // ============================================================================
 
 module Link = {
@@ -55,7 +72,27 @@ module Link = {
     ~replace: bool=?,
     ~scroll: bool=?,
     ~className: string=?,
+    ~transitionTypes: array<string>=?,
     ~children: React.element,
+  ) => React.element = "default"
+}
+
+// ============================================================================
+// IMAGE COMPONENT (Updated for Next.js 16)
+// ============================================================================
+
+module Image = {
+  @module("next/image") @react.component
+  external make: (
+    ~className: string=?,
+    ~src: string,
+    ~alt: string,
+    ~width: int=?,
+    ~height: int=?,
+    ~fill: bool=?,
+    ~preload: bool=?,
+    ~priority: bool=?,
+    ~children: React.element=?,
   ) => React.element = "default"
 }
 
@@ -78,11 +115,11 @@ module Metadata = {
     siteName: option<string>,
     images: option<array<openGraphImage>>,
     locale: option<string>,
-    type_: option<string>, // 'website', 'article', etc.
+    type_: option<string>,
   }
 
   type twitter = {
-    card: option<string>, // 'summary', 'summary_large_image', etc.
+    card: option<string>,
     title: option<string>,
     description: option<string>,
     creator: option<string>,
@@ -105,7 +142,7 @@ module Metadata = {
 
   type author = {
     name: option<string>,
-    url: option<string>
+    url: option<string>,
   }
 
   type icons = {
@@ -124,11 +161,18 @@ module Metadata = {
     robots: option<robots>,
     openGraph: option<openGraph>,
     twitter: option<twitter>,
-    viewport: option<string>,
-    themeColor: option<string>,
-    colorScheme: option<string>,
     manifest: option<string>,
     icons: option<icons>,
+  }
+
+  // Viewport type (separate export in Next.js 16)
+  type viewport = {
+    width: option<string>,
+    initialScale: option<float>,
+    maximumScale: option<float>,
+    userScalable: option<bool>,
+    themeColor: option<string>,
+    colorScheme: option<string>,
   }
 
   // Helper function to create metadata
@@ -139,7 +183,7 @@ module Metadata = {
     ~openGraph=?,
     ~twitter=?,
     ~robots=?,
-    ()
+    (),
   ): metadata => {
     title,
     description,
@@ -147,9 +191,6 @@ module Metadata = {
     openGraph,
     twitter,
     robots,
-    viewport: None,
-    themeColor: None,
-    colorScheme: None,
     manifest: None,
     icons: None,
     creator: None,
@@ -157,10 +198,10 @@ module Metadata = {
     authors: None,
   }
 
-  // generateMetadata function type
+  // generateMetadata function type (params/searchParams are now promises in Next.js 16)
   type generateMetadataParams<'params, 'searchParams> = {
-    params: 'params,
-    searchParams: 'searchParams,
+    params: promise<'params>,
+    searchParams: promise<'searchParams>,
   }
 
   type generateMetadataFn<'params, 'searchParams> =
@@ -174,7 +215,7 @@ module Metadata = {
 module ErrorHandling = {
   // Error page props
   type errorProps = {
-    error: Js.Exn.t,
+    error: Exn.t,
     reset: unit => unit,
   }
 
@@ -190,7 +231,8 @@ module ErrorHandling = {
 module Loading = {
   // Suspense boundary helpers
   @module("react")
-  external suspense: (~fallback: React.element, ~children: React.element) => React.element = "Suspense"
+  external suspense: (~fallback: React.element, ~children: React.element) => React.element =
+    "Suspense"
 }
 
 // ============================================================================
