@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "next-app-router-bun",
+      "name": "rescript-next-chat",
       "dependencies": {
         "@rescript/core": "^1.6.1",
         "@rescript/react": "^0.14.2",
