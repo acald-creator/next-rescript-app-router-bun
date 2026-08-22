@@ -18,20 +18,20 @@
   },
   "dependencies": {
     "@rescript/core": "^1.6.1",
-    "@rescript/react": "^0.14.0",
-    "next": "^16.2.3",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
+    "@rescript/react": "^0.14.2",
+    "next": "^16.3.2",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "rescript": "^11.1.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.0",
-    "@tailwindcss/postcss": "^4.1.16",
-    "@types/node": "^20.19.24",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
+    "@biomejs/biome": "^2.5.10",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^20.19.43",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
     "gentype": "^4.5.0",
-    "tailwindcss": "^4.1.16",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3"
   }
 }
