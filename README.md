@@ -14,7 +14,7 @@ Install dependencies:
 bun install
 ```
 
-Copy the env file and add a key when you want a real model:
+Copy the env file. Leave the key and base URL empty to keep demo mode; fill them in for a real model:
 
 ```bash
 cp .env.example .env.local
@@ -40,8 +40,8 @@ Open [http://localhost:3000](http://localhost:3000).
 | Variable | Default | Notes |
 |---|---|---|
 | `OPENAI_API_KEY` | unset | Bearer token. Optional for local servers that skip auth. |
-| `OPENAI_BASE_URL` | `https://api.openai.com/v1` | Must include `/v1` when the provider uses it. |
-| `OPENAI_MODEL` | `gpt-4o-mini` | Sent as `model` in the Chat Completions body. |
+| `OPENAI_BASE_URL` | unset (code default `https://api.openai.com/v1`) | Must include `/v1` when the provider uses it. |
+| `OPENAI_MODEL` | unset (code default `gpt-4o-mini`) | Sent as `model` in the Chat Completions body. |
 | `OPENAI_SYSTEM_PROMPT` | unset | Prepended as a `system` message on the server. |
 
 If both `OPENAI_API_KEY` and `OPENAI_BASE_URL` are unset, the route runs in demo mode.
