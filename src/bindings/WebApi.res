@@ -1,4 +1,4 @@
-// Browser / Node web API bindings used by the chat client and route handler.
+// Web fetch, streams, and abort — the bindings the chat route and UI actually call.
 
 type readableStream
 type abortSignal

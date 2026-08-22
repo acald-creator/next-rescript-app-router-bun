@@ -51,26 +51,13 @@ The `next.config.ts` includes:
 - `src/app/Chat.res` - Client component (`@@directive("'use client'")`) for messages, composer, and streaming
 - `src/app/api/chat/route.res` - `GET` config + `POST` streaming Chat Completions proxy
 - `src/chat/` - Message JSON, OpenAI-compatible client, SSE parser
-- `src/bindings/` - ReScript bindings for Next.js and `fetch`/streams
+- `src/bindings/` - In-repo ReScript bindings used by this template (`Next.res`, `WebApi.res`)
 
 ### ReScript Bindings
 
-**`src/bindings/NextAppRouter.res`** — Client-side bindings:
-- Navigation hooks: `useRouter`, `usePathname`, `useSearchParams`, `useParams`
-- Router methods with options: `pushWithOptions`, `replaceWithOptions`, `prefetchWithOptions`
-- `Link` component with `transitionTypes` prop (Next.js 16)
-- `Image` component with `preload` prop (`priority` deprecated)
-- `Metadata` types (viewport/themeColor/colorScheme removed — use separate `viewport` export)
-- `generateMetadataParams` with async `promise<T>` for params/searchParams
-- Error handling with `Exn.t`
+Bindings stay in the repo for the MVP. Add Next.js APIs to `Next.res` when a page needs them. Extract a shared package later if a second app wants the same surface.
 
-**`src/bindings/NextAppServer.res`** — Server-side bindings:
-- `cookies()` and `headers()` return `promise<T>` (async in Next.js 16)
-- Page `params` and `searchParams` are `promise<T>` (async in Next.js 16)
-- Server Actions with FormData
-- Route Handlers (NextRequest, HTTP method types)
-- Stable `cacheTag` and `cacheLife` bindings (replace deprecated `unstable_cache`/`unstable_noStore`)
-- Revalidation: `revalidatePath`, `revalidateTag`
+**`src/bindings/Next.res`** — `metadata` export used by `layout.res`.
 
 **`src/bindings/WebApi.res`** — fetch, ReadableStream, AbortController, and Response helpers used by the chat route and client.
 
@@ -225,30 +212,16 @@ const geistMonoFont = Geist_Mono({
 ### Metadata Export (Next.js 16)
 **Pattern**: Use the Metadata types from bindings. Note: `viewport`, `themeColor`, and `colorScheme` are no longer part of `metadata` — use a separate `viewport` export.
 ```rescript
-open NextAppRouter.Metadata
+open Next.Metadata
 
 let metadata: metadata = {
   title: Some("Page Title"),
   description: Some("Page description"),
-  keywords: None,
-  authors: None,
-  creator: None,
-  publisher: None,
-  robots: None,
-  openGraph: None,
-  twitter: None,
-  manifest: None,
-  icons: None,
 }
 ```
 
 ### Async Server APIs (Next.js 16)
-**Important**: `cookies()`, `headers()`, page `params`, and `searchParams` are all async in Next.js 16. They return `promise<T>` and must be awaited.
-```rescript
-// Server component usage
-let cookieStore = await NextAppServer.Cookies.cookies()
-let headerStore = await NextAppServer.Headers.headers()
-```
+**Important**: `cookies()`, `headers()`, page `params`, and `searchParams` are async in Next.js 16. They return `promise<T>` and must be awaited. Bind them in `Next.res` when a page needs them.
 
 ### Special HTML Attributes
 **Issue**: ReScript doesn't support quoted prop names like `"aria-hidden"`
@@ -271,3 +244,13 @@ let headerStore = await NextAppServer.Headers.headers()
 // Use this:
 <div>{React.string("Hello World")}</div>
 ```
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

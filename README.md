@@ -87,8 +87,7 @@ src/
 │   ├── OpenAI.res          # OpenAI-compatible client + demo stream
 │   └── Sse.res             # SSE parser for Chat Completions chunks
 └── bindings/
-    ├── NextAppRouter.res   # Client-side Next.js bindings
-    ├── NextAppServer.res   # Server-side Next.js bindings
+    ├── Next.res            # Metadata (add Next APIs as needed)
     └── WebApi.res          # fetch, streams, abort
 ```
 

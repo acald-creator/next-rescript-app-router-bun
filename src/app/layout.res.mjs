@@ -30,16 +30,7 @@ function Layout(props) {
 
 var metadata = {
   title: "Chat · ReScript + Next.js",
-  description: "OpenAI-compatible chat template for Next.js App Router and ReScript",
-  keywords: undefined,
-  authors: undefined,
-  creator: undefined,
-  publisher: undefined,
-  robots: undefined,
-  openGraph: undefined,
-  twitter: undefined,
-  manifest: undefined,
-  icons: undefined
+  description: "OpenAI-compatible chat template for Next.js App Router and ReScript"
 };
 
 var make = Layout;

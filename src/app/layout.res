@@ -1,4 +1,4 @@
-open NextAppRouter.Metadata
+open Next.Metadata
 
 // Font loaders - must be const declarations at module scope for Next.js
 %%raw(`
@@ -23,15 +23,6 @@ const geistMonoFont = Geist_Mono({
 let metadata: metadata = {
   title: Some("Chat · ReScript + Next.js"),
   description: Some("OpenAI-compatible chat template for Next.js App Router and ReScript"),
-  keywords: None,
-  authors: None,
-  creator: None,
-  publisher: None,
-  robots: None,
-  openGraph: None,
-  twitter: None,
-  manifest: None,
-  icons: None,
 }
 
 // CSS import
