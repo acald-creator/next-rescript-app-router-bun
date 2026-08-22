@@ -21,8 +21,8 @@ const geistMonoFont = Geist_Mono({
 
 // Metadata export
 let metadata: metadata = {
-  title: Some("ReScript + Next.js"),
-  description: Some("Next.js App Router powered by ReScript"),
+  title: Some("Chat · ReScript + Next.js"),
+  description: Some("OpenAI-compatible chat template for Next.js App Router and ReScript"),
   keywords: None,
   authors: None,
   creator: None,

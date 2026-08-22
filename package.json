@@ -2,6 +2,7 @@
   "name": "next-app-router-bun",
   "version": "0.1.0",
   "private": true,
+  "description": "OpenAI-compatible chat template for Next.js App Router, ReScript, and Bun",
   "scripts": {
     "build": "rescript && next build",
     "build:turbo": "next build --turbopack",
@@ -12,7 +13,7 @@
     "res:build": "rescript",
     "res:clean": "rescript clean",
     "res:dev": "rescript -w",
-    "start": "npx serve out",
+    "start": "next start",
     "start:turbo": "next start"
   },
   "dependencies": {

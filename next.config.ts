@@ -1,5 +1,5 @@
+import fs from "node:fs";
 import type { NextConfig } from "next";
-import fs from "fs";
 
 // Read ReScript configuration to get dependencies
 const rescript = JSON.parse(fs.readFileSync("./rescript.json", "utf8"));

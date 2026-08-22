@@ -29,8 +29,8 @@ function Layout(props) {
 }
 
 var metadata = {
-  title: "ReScript + Next.js",
-  description: "Next.js App Router powered by ReScript",
+  title: "Chat · ReScript + Next.js",
+  description: "OpenAI-compatible chat template for Next.js App Router and ReScript",
   keywords: undefined,
   authors: undefined,
   creator: undefined,

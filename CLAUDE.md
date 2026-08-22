@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Next.js 16 application using the App Router architecture with ReScript integration and Bun as the package manager. All pages and components are written in ReScript (no TypeScript components). Uses Biome for code formatting and linting, and Tailwind CSS v4 for styling.
+This is a Next.js 16 App Router chat template written in ReScript, using Bun as the package manager. All pages and components are ReScript (no TypeScript components). The UI streams OpenAI-compatible Chat Completions from `POST /api/chat`. Uses Biome for formatting/linting and Tailwind CSS v4 for styling.
 
 ## Development Commands
 
@@ -22,15 +22,15 @@ This is a Next.js 16 application using the App Router architecture with ReScript
 - `bun run format` - Auto-format code with Biome
 
 ### Production
-- `bun run start` - Serve static build with npx serve
-- `bun run start:turbo` - Start Next.js production server
+- `bun run start` - Start Next.js production server
 
 ## Architecture
 
 ### ReScript-First Approach
 All pages, layouts, and components are written in ReScript:
-- `src/app/` - Next.js App Router pages, layouts, and components (`.res` files)
-- `src/bindings/` - ReScript FFI bindings for Next.js APIs
+- `src/app/` - Next.js App Router pages, layouts, chat UI, and route handlers (`.res` files)
+- `src/chat/` - OpenAI-compatible message types, SSE parser, and completions client
+- `src/bindings/` - ReScript FFI bindings for Next.js and web APIs
 
 ### ReScript Integration
 - ReScript source files are in `src/` with `.res` extension
@@ -47,9 +47,11 @@ The `next.config.ts` includes:
 - `pageExtensions: ["tsx", "ts", "jsx", "js", "res.mjs"]`
 
 ### Directory Structure
-- `src/app/` - Next.js App Router pages, layouts, and components (ReScript)
-- `src/app/CodeBlock.res` - Client component for interactive code showcase
-- `src/bindings/` - ReScript bindings for Next.js APIs
+- `src/app/` - Next.js App Router pages, layouts, and the client chat UI
+- `src/app/Chat.res` - Client component (`@@directive("'use client'")`) for messages, composer, and streaming
+- `src/app/api/chat/route.res` - `GET` config + `POST` streaming Chat Completions proxy
+- `src/chat/` - Message JSON, OpenAI-compatible client, SSE parser
+- `src/bindings/` - ReScript bindings for Next.js and `fetch`/streams
 
 ### ReScript Bindings
 
@@ -69,6 +71,10 @@ The `next.config.ts` includes:
 - Route Handlers (NextRequest, HTTP method types)
 - Stable `cacheTag` and `cacheLife` bindings (replace deprecated `unstable_cache`/`unstable_noStore`)
 - Revalidation: `revalidatePath`, `revalidateTag`
+
+**`src/bindings/WebApi.res`** — fetch, ReadableStream, AbortController, and Response helpers used by the chat route and client.
+
+Environment (server-only, via `.env.local`): `OPENAI_API_KEY`, `OPENAI_BASE_URL`, `OPENAI_MODEL`, `OPENAI_SYSTEM_PROMPT`. If key and base URL are both unset, `/api/chat` streams a local demo response.
 
 ## Tools and Configuration
 
