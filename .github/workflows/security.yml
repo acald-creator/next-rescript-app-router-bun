@@ -1,29 +1,33 @@
 name: Security Compliance
 
+# Default permissions: grant the workflow the minimal elevated permissions needed
+# for signing and uploading provenance when enabled. Callers running this
+# workflow will grant these permissions in their repo; remove or restrict
+# these if you do not want to allow write operations from the workflow.
+permissions:
+  id-token: write
+  security-events: write
+  contents: write
+  packages: write
+
 on:
   push:
-    branches: [main, master]
+    branches: [main, develop]
   pull_request:
-  workflow_dispatch:  # Allow manual trigger for testing
+  schedule:
+    - cron: '0 0 * * 0' # Weekly scan
 
 jobs:
-  # Call your security compliance hub
-  security-scan:
+  security:
     uses: acald-creator/security-compliance-hub/.github/workflows/security-scan.yml@main
     with:
-      severity-threshold: MEDIUM
-      compliance-frameworks: openssf
-      enable-signing: false  # Start with false for testing
-    permissions:
-      contents: read
-      security-events: write
-      id-token: write
-      actions: read
+      severity-threshold: HIGH
+      compliance-frameworks: openssf,owasp,slsa
+      enable-signing: true
+    secrets: inherit
 
-  # Call the DevSecOps workflow
-  devsecops-check:
+  devsecops:
     uses: acald-creator/security-compliance-hub/.github/workflows/devsecops-infinity.yml@main
     with:
-      phase: plan  # Just test one phase first
-    permissions:
-      contents: read
+      phase: all
+    secrets: inherit
