@@ -1,0 +1,61 @@
+header:
+  schema-version: "1.0.0"
+  last-updated: "2026-08-21"
+  last-reviewed: "2026-08-21"
+  commit-hash: ""
+  project-url: "https://github.com/acald-creator/rescript-next-chat"
+  changelog: "https://github.com/acald-creator/rescript-next-chat/releases"
+
+project-lifecycle:
+  status: "active"
+  bug-fixes-only: false
+
+contribution-policy:
+  accepts-pull-requests: true
+  accepts-automated-pull-requests: true
+  automated-tools-list:
+    - automated-tool: "dependabot"
+      action: "allowed"
+      path:
+        - "/"
+
+distribution-points:
+  - "https://github.com/acald-creator/rescript-next-chat"
+
+security-artifacts:
+  self-assessment:
+    - comment: "See SECURITY.md for the security policy."
+      evidence-url:
+        - "https://github.com/acald-creator/rescript-next-chat/blob/main/SECURITY.md"
+
+security-contacts:
+  - type: "other"
+    value: "https://github.com/acald-creator/rescript-next-chat/security/advisories/new"
+
+security-testing:
+  - tool-type: "sca"
+    tool-name: "Dependabot"
+    tool-url: "https://github.com/dependabot"
+    integration:
+      ad-hoc: false
+      ci: true
+      before-release: true
+  - tool-type: "sast"
+    tool-name: "Semgrep"
+    tool-url: "https://semgrep.dev"
+    integration:
+      ad-hoc: false
+      ci: true
+      before-release: false
+  - tool-type: "sast"
+    tool-name: "CodeQL"
+    tool-url: "https://codeql.github.com"
+    integration:
+      ad-hoc: false
+      ci: true
+      before-release: false
+
+vulnerability-reporting:
+  accepts-vulnerability-reports: true
+  security-policy: "https://github.com/acald-creator/rescript-next-chat/blob/main/SECURITY.md"
+  comment: "Report vulnerabilities via GitHub Security Advisories. Do not open a public issue."

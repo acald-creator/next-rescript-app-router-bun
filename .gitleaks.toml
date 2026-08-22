@@ -1,0 +1,20 @@
+title = "gitleaks config"
+
+[extend]
+# Extend the default gitleaks ruleset
+useDefault = true
+
+[allowlist]
+description = "Project-specific allowlist"
+paths = [
+  '''\.github/workflows/.*\.yml$''',
+  '''.*\.example.*''',
+  '''.*\.template.*'''
+]
+
+regexes = [
+  # GitHub Actions expressions
+  '''\$\{\{\s*secrets\.[A-Z_]+\s*\}\}''',
+  # Workflow references
+  '''uses:\s+[\w\-\.\/]+@[\w\.]+'''
+]

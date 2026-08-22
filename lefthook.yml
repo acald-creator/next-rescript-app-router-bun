@@ -1,0 +1,35 @@
+pre-commit:
+  parallel: true
+  commands:
+    # Secret scanning — only scan staged changes. `gitleaks detect` scans
+    # the entire git history on every commit, which is slow and surfaces
+    # historical findings that cannot be fixed in the current commit.
+    gitleaks:
+      run: gitleaks git --pre-commit --staged --config .gitleaks.toml .
+
+    # Static analysis for security issues
+    semgrep:
+      glob: "*.{js,ts,py,go}"
+      run: semgrep --config=auto {staged_files}
+
+# Conventional-commit enforcement is intentionally omitted. To enable it,
+# uncomment one option below *and* add it under a `commit-msg: commands:`
+# block. Lefthook rejects an empty commands: map, so the block itself is
+# omitted until at least one command is active.
+#   cocogitto:
+#     run: cog verify {1}
+#   commitlint:
+#     run: npx commitlint --edit {1}
+
+pre-push:
+  commands:
+    # Check the dependency tree for known vulnerabilities.
+    # `bun audit` (added in Bun 1.2) understands bun.lock natively. If the
+    # target repo uses npm/yarn/pnpm instead, swap this for `npm audit`,
+    # `yarn npm audit`, or `pnpm audit` as appropriate.
+    audit:
+      run: bun audit
+
+    # Uncomment to block pushes that fail the test suite:
+    # test:
+    #   run: bun test

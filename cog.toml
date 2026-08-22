@@ -1,0 +1,17 @@
+[changelog]
+path = "CHANGELOG.md"
+authors = []
+
+# Conventional commit types
+[commit_types]
+feat = { changelog_title = "Features" }
+fix = { changelog_title = "Bug Fixes" }
+docs = { changelog_title = "Documentation" }
+style = { changelog_title = "Style" }
+refactor = { changelog_title = "Refactoring" }
+perf = { changelog_title = "Performance" }
+test = { changelog_title = "Tests" }
+build = { changelog_title = "Build" }
+ci = { changelog_title = "CI/CD" }
+chore = { changelog_title = "Chores" }
+security = { changelog_title = "Security" }
